@@ -27,7 +27,7 @@ public class MonthSummaryService {
 	 * @param month
 	 * @return 月次収支リスト
 	 */
-	public List<TransactionsDto> toCurrentList(List<TransactionsDto> transactiionsList, int year, int month) {
+	public List<TransactionsDto> toCurrentList(List<TransactionsDto> transactiionsList, Integer year, Integer month) {
 		
 		// 全取引履歴データを取得
 		List<TransactionsDto> transactionsList = transactionsService.findAll();
@@ -46,7 +46,7 @@ public class MonthSummaryService {
 	 * @param month
 	 * @return 月次サマリー用加工データ
 	 */
-	public MonthSummaryDto calc(int year, int month) {
+	public MonthSummaryDto calc(Integer year, Integer month) {
 		
 		// 月次サマリー用加工データ 格納Beanクラス
 		MonthSummaryDto monthSummaryDto = new MonthSummaryDto();

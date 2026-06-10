@@ -44,6 +44,7 @@ export default function DashBoardView(){
 
         if(!response.ok){
           console.log("通信失敗");
+          return;
         }
 
       }catch(error){
