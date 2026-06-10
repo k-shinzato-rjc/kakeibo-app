@@ -24,8 +24,8 @@ export default function DashBoardView(){
 
   const[summary, setSummary] = useState<SummaryData>();
   const router = useRouter();
-  const springURL = "http://localhost:8080";
   const [isMounted, setIsMounted] = useState(false);
+  const springURL = "http://localhost:8080";
 
   useEffect(() => {
     setIsMounted(true);
