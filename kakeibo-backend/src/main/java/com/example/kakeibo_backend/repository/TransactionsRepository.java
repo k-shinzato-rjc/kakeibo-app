@@ -32,18 +32,8 @@ public interface TransactionsRepository extends JpaRepository<TransactionsEntity
 	public TransactionsEntity save(TransactionsEntity transactionsEntity);
 	
 	/**
-	 * 取引履歴 全登録
-	 * @param entityList 取引履歴リスト
-	 */
-	public void saveAll(List<TransactionsEntity> entityList);
-	
-	/**
 	 * 取引情報 ID指定削除
 	 */
 	public void deleteById(Integer id);
 	
-	/**
-	 * 全取引履歴 削除
-	 */
-	public void deleteAll();
 }

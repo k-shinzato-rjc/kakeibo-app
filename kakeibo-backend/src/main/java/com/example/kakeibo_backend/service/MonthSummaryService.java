@@ -1,6 +1,5 @@
 package com.example.kakeibo_backend.service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -36,8 +35,8 @@ public class MonthSummaryService {
 		List<TransactionsDto> transactionsList = transactionsService.findAll();
 		
 		// 当月の取引履歴データを絞り込む
-		List<TransactionsDto> currentList = transactionsList.stream().filter(t -> t.getTransactionDate().getYear() == year && 
-				t.getTransactionDate().getMonthValue() == month).collect(Collectors.toList());
+		List<TransactionsDto> currentList = transactionsList.stream().filter(t -> t.getTransactionDate().getYear() == year &&
+			t.getTransactionDate().getMonthValue() == month).collect(Collectors.toList());
 		
 		// 当月取引履歴リストから収入合計を計算（カテゴリーID = 5,6）
 		int totalIncome = currentList.stream().filter(t -> "INCOME".equals(t.getCategories().getType())).mapToInt(t -> t.getAmount()).sum();
@@ -52,10 +51,10 @@ public class MonthSummaryService {
 		List<TransactionsDto> currentExpenseList = currentList.stream().filter(t -> "EXPENSE".equals(t.getCategories().getType()))
 				.collect(Collectors.toList());
 		
-		List<ExpenseByCategoryDto> categoryExpenseList = new ArrayList<ExpenseByCategoryDto>();
+		List<ExpenseByCategoryDto> categoryExpenseList = monthSummaryDto.getExpenseByCategory();
 		
 		for(TransactionsDto expense : currentExpenseList) {
-			switch(expense.getCategoryId()) {
+			switch(expense.getCategoryId().intValue()) {
 				case 1 -> categoryExpenseList.stream().filter(e -> "食費".equals(e.getCategoryName())).forEach(e -> e.setAmount(e.getAmount() + expense.getAmount()));
 				case 2 -> categoryExpenseList.stream().filter(e -> "家賃".equals(e.getCategoryName())).forEach(e -> e.setAmount(e.getAmount() + expense.getAmount()));
 				case 3 -> categoryExpenseList.stream().filter(e -> "光熱費".equals(e.getCategoryName())).forEach(e -> e.setAmount(e.getAmount() + expense.getAmount()));
@@ -71,7 +70,7 @@ public class MonthSummaryService {
 		monthSummaryDto.setTotalIncome(totalIncome);
 		monthSummaryDto.setTotalExpense(totalExpense);
 		monthSummaryDto.setBalance(balance);
-		monthSummaryDto.setExpenseList(categoryExpenseList);
+		monthSummaryDto.setExpenseByCategory(categoryExpenseList);
 		
 		return monthSummaryDto;
 		

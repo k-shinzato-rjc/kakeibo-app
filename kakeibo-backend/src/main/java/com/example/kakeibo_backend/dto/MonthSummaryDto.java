@@ -28,20 +28,27 @@ public class MonthSummaryDto {
 	private Integer balance;
 	
 	// カテゴリーごと出費データリスト
-	private List<ExpenseByCategoryDto> expenseList;
+	private List<ExpenseByCategoryDto> expenseByCategory;
 	
 	// カテゴリーごとの集計beanを生成し、リストにまとめる
 	public MonthSummaryDto() {
-		expenseList = new ArrayList<ExpenseByCategoryDto>();
+		expenseByCategory = new ArrayList<ExpenseByCategoryDto>();
 		
 		ExpenseByCategoryDto food = new ExpenseByCategoryDto("食費");
-		ExpenseByCategoryDto rent = new ExpenseByCategoryDto("家賃");
-		ExpenseByCategoryDto util = new ExpenseByCategoryDto("光熱費");
-		ExpenseByCategoryDto habit = new ExpenseByCategoryDto("交際費");
+		food.setAmount(0);
 		
-		expenseList.add(food);
-		expenseList.add(rent);
-		expenseList.add(util);
-		expenseList.add(habit);
+		ExpenseByCategoryDto rent = new ExpenseByCategoryDto("家賃");
+		rent.setAmount(0);
+		
+		ExpenseByCategoryDto util = new ExpenseByCategoryDto("光熱費");
+		util.setAmount(0);
+		
+		ExpenseByCategoryDto habit = new ExpenseByCategoryDto("交際費");
+		habit.setAmount(0);
+		
+		expenseByCategory.add(food);
+		expenseByCategory.add(rent);
+		expenseByCategory.add(util);
+		expenseByCategory.add(habit);
 	}
 }
