@@ -21,6 +21,26 @@ public class MonthSummaryService {
 	private TransactionsService transactionsService;
 	
 	/**
+	 * 全収支リスト →　月次収支リスト
+	 * @param transactiionsList
+	 * @param year
+	 * @param month
+	 * @return 月次収支リスト
+	 */
+	public List<TransactionsDto> toCurrentList(List<TransactionsDto> transactiionsList, int year, int month) {
+		
+		// 全取引履歴データを取得
+		List<TransactionsDto> transactionsList = transactionsService.findAll();
+
+		// 当月の取引履歴データを絞り込む
+		List<TransactionsDto> currentList = transactionsList.stream()
+				.filter(t -> t.getTransactionDate().getYear() == year &&
+						t.getTransactionDate().getMonthValue() == month)
+				.collect(Collectors.toList());
+
+		return currentList;
+	}
+	/**
 	 * nextjsから転送された現在の年・月を基に月次収支とカテゴリーごと出費を計算して返す
 	 * @param year
 	 * @param month
@@ -35,8 +55,7 @@ public class MonthSummaryService {
 		List<TransactionsDto> transactionsList = transactionsService.findAll();
 		
 		// 当月の取引履歴データを絞り込む
-		List<TransactionsDto> currentList = transactionsList.stream().filter(t -> t.getTransactionDate().getYear() == year &&
-			t.getTransactionDate().getMonthValue() == month).collect(Collectors.toList());
+		List<TransactionsDto> currentList = toCurrentList(transactionsList, year, month);
 		
 		// 当月取引履歴リストから収入合計を計算（カテゴリーID = 5,6）
 		int totalIncome = currentList.stream().filter(t -> "INCOME".equals(t.getCategories().getType())).mapToInt(t -> t.getAmount()).sum();
@@ -51,6 +70,7 @@ public class MonthSummaryService {
 		List<TransactionsDto> currentExpenseList = currentList.stream().filter(t -> "EXPENSE".equals(t.getCategories().getType()))
 				.collect(Collectors.toList());
 		
+		// 当月カテゴリーごとの出費をリストへ格納
 		List<ExpenseByCategoryDto> categoryExpenseList = monthSummaryDto.getExpenseByCategory();
 		
 		for(TransactionsDto expense : currentExpenseList) {
