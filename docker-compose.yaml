@@ -14,20 +14,6 @@ services:
     volumes:
       - db_data:/var/lib/postgresql/data
 
-  # 2. バックエンド (SpringBoot)
-  backend:
-    build:
-      context: ./kakeibo-backend  # SpringBootのDockerfileがあるフォルダパス
-    container_name: kakeibo-backend
-    ports:
-      - "8080:8080"
-    environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/kakeibo_db
-      - SPRING_DATASOURCE_USERNAME=postgres
-      - SPRING_DATASOURCE_PASSWORD=password
-    depends_on:
-      - db
-
   # 3. フロントエンド (Next.js)
   frontend:
     build:
@@ -37,8 +23,6 @@ services:
       - "3000:3000"
     environment:
       - NEXT_PUBLIC_API_URL=http://localhost:8080
-    depends_on:
-      - backend
 
 # データベースのデータをPC内に永続保存するための設定
 volumes:

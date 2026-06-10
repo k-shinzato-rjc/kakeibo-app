@@ -27,14 +27,14 @@ public class TransactionsEntity {
 	private Integer id;
 	
 	// カテゴリーID カテゴリーテーブルと結合する外部キー
-	@Column(name="category_id")
+	@Column(name="category_id",insertable = false, updatable = false)
 	private Integer categoryId;
 	
 	// 取引金額
 	private Integer amount;
 	
 	// 取引日
-	@Column(name="transanction_date")
+	@Column(name="transaction_date")
 	private LocalDateTime transactionDate;
 	
 	// メモ
