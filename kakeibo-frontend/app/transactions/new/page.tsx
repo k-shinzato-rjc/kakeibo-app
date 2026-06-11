@@ -36,8 +36,9 @@ export default function InputView() {
 
   // 入力フォームをSpringBootに転送（POST通信）
   const Submit = async (data: Transaction) => {
-    if (!window.confirm("この内容で登録してもよろしいですか？")) return;
-
+    if (!window.confirm("この内容で登録してもよろしいですか？")) {
+      return;
+    }
     try {
       const response = await fetch(springURL + "/api/regist", {
         method: "POST",
