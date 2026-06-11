@@ -58,6 +58,7 @@ public class TransactionsEntity {
 		
 		TransactionsDto transactionsDto = new TransactionsDto();
 		
+		transactionsDto.setId(id);
 		transactionsDto.setCategoryId(categoryId);
 		transactionsDto.setAmount(amount);
 		transactionsDto.setTransactionDate(transactionDate);

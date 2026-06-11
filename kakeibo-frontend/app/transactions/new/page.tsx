@@ -49,6 +49,7 @@ export default function InputView() {
 
       if (!response.ok) {
         alert("登録に失敗しました。");
+        
       } else {
         alert("登録が完了しました！");
         reset();

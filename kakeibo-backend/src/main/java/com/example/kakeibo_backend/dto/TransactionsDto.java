@@ -13,6 +13,8 @@ import lombok.Data;
 @Data
 public class TransactionsDto {
 	
+	private Integer id;
+	
 	// カテゴリーID
 	private Integer categoryId;
 	
