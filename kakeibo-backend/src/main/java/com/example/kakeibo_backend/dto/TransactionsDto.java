@@ -1,6 +1,6 @@
 package com.example.kakeibo_backend.dto;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 import com.example.kakeibo_backend.entity.TransactionsEntity;
 
@@ -13,9 +13,6 @@ import lombok.Data;
 @Data
 public class TransactionsDto {
 	
-	// 取引ID
-	private Integer id;
-	
 	// カテゴリーID
 	private Integer categoryId;
 	
@@ -23,7 +20,7 @@ public class TransactionsDto {
 	private Integer amount;
 	
 	// 取引日
-	private LocalDateTime transactionDate;
+	private LocalDate transactionDate;
 	
 	// メモ
 	private String memo;
@@ -34,14 +31,15 @@ public class TransactionsDto {
 	/**
 	 * Dto → Entity 変換
 	 * ※ Entity内 結合先テーブルデータには何も入れない
+	 * 　 取引IDも自動生成のため、データを渡さない
 	 * 
 	 * @return 取引履歴データ（Entity)
 	 */
+	
 	public TransactionsEntity toEntity() {
 		
 		TransactionsEntity transactionsEntity = new TransactionsEntity();
 		
-		transactionsEntity.setId(categoryId);
 		transactionsEntity.setCategoryId(categoryId);
 		transactionsEntity.setAmount(amount);
 		transactionsEntity.setTransactionDate(transactionDate);
