@@ -2,6 +2,7 @@ package com.example.kakeibo_backend.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -102,5 +103,33 @@ public class TransactionsService {
 		dtoList.stream().forEach(dto -> entityList.add(dto.toEntity()));
 		
 		return entityList;
+	}
+	
+	/**
+	 * 全収支リスト →　月次収支リスト
+	 * @param transactiionsList
+	 * @param year
+	 * @param month
+	 * @return 月次収支リスト
+	 */
+	public List<TransactionsDto> toMonthList(List<TransactionsDto> transactionsList, Integer year, Integer month) {
+		
+		// 当月の取引履歴データを絞り込む
+		List<TransactionsDto> monthList = transactionsList.stream()
+				.filter(t -> t.getTransactionDate().getYear() == year &&
+						t.getTransactionDate().getMonthValue() == month)
+				.collect(Collectors.toList());
+
+		return monthList;
+	}
+	
+	/**
+	 * 全履歴リスト（セッション）からID該当の履歴データを取得し、返す
+	 * @param sessionList
+	 * @param id
+	 * @return ID該当の履歴データ
+	 */
+	public TransactionsDto searchByIdSession(List<TransactionsDto> sessionList, Integer id){
+		return sessionList.stream().filter(s -> id.equals(s.getId())).findFirst().orElse(null);
 	}
 }

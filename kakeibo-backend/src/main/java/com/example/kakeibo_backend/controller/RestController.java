@@ -47,8 +47,12 @@ public class RestController {
 	@GetMapping("/api/summary")
 	public MonthSummaryDto summary(@RequestParam(name="year")Integer year,@RequestParam(name="month")Integer month, HttpSession httpSession) {
 		
-		MonthSummaryDto monthSummaryDto = monthSummaryService.calc(year, month);
-		httpSession.setAttribute("summary", monthSummaryDto);
+		// 月間サマリー用データをセッションに保存
+		MonthSummaryDto monthSummaryDto = monthSummaryService.calc(year, month); 
+		
+		// 全履歴リストをセッションに保存
+		List<TransactionsDto> transactionsList = transactionsService.findAll();
+		httpSession.setAttribute("allTransactions", transactionsList);
 		
 		return monthSummaryDto;
 	}
@@ -57,6 +61,7 @@ public class RestController {
 	 * 全カテゴリー情報を返す（入力画面セレクトボックス用）
 	 * @return 全カテゴリー情報リスト
 	 */
+	@ResponseBody
 	@GetMapping("/api/categories")
 	public List<CategoriesDto> categories(){
 		return categoriesService.findAll();
@@ -73,5 +78,67 @@ public class RestController {
 		TransactionsDto transactionsDto = transactionsService.save(form.toDto());
 		
 		return transactionsDto;
+	}
+	
+	/**
+	 * セッションに格納された全履歴データを返す
+	 * @param httpSession
+	 * @return 全履歴データ
+	 */
+	@SuppressWarnings("unchecked")
+	@ResponseBody
+	@GetMapping("/api/transactions/all")
+	public List<TransactionsDto> transactions(HttpSession httpSession){
+		
+		return (List<TransactionsDto>)httpSession.getAttribute("allTransactions");
+	}
+	
+	/**
+	 * 全履歴リストからID指定で履歴を削除 → 削除後の全履歴リストを返す
+	 * @param id
+	 * @param httpSession
+	 * @return 該当履歴削除後のリスト
+	 */
+	@ResponseBody
+	@PostMapping("/api/transactions/delete")
+	public List<TransactionsDto> deleteById(@RequestParam("id") Integer id){
+		
+		transactionsService.deleteById(id);
+		
+		return transactionsService.findAll();
+	}
+	
+	/**
+	 * セッションから全履歴リストを取り出し、年月で絞った履歴を返す
+	 * @param year
+	 * @param month
+	 * @param httpSession
+	 * @return 年月で絞った履歴リスト
+	 */
+	@ResponseBody
+	@PostMapping("/api/transactions/select")
+	public List<TransactionsDto> selectByPeriod(@RequestParam("year") Integer year, @RequestParam("month") Integer month,
+			HttpSession httpSession){
+		
+		@SuppressWarnings("unchecked")
+		List<TransactionsDto> allTransactionsDto = (List<TransactionsDto>)httpSession.getAttribute("allTransactions");
+		
+		return transactionsService.toMonthList(allTransactionsDto, year, month);
+	}
+	
+	/**
+	 * 全履歴リスト（セッション）からID該当の履歴データを取得し、返す
+	 * @param id
+	 * @param httpSession
+	 * @return ID該当の履歴データ
+	 */
+	@ResponseBody
+	@PostMapping("/api/transactions/search")
+	public TransactionsDto searchById(@RequestParam("id") Integer id, HttpSession httpSession) {
+		
+		@SuppressWarnings("unchecked")
+		List<TransactionsDto> allTransactionsDto = (List<TransactionsDto>)httpSession.getAttribute("allTransactions");
+		
+		return transactionsService.searchByIdSession(allTransactionsDto, id);
 	}
 }
