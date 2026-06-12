@@ -122,14 +122,4 @@ public class TransactionsService {
 
 		return monthList;
 	}
-	
-	/**
-	 * 全履歴リスト（セッション）からID該当の履歴データを取得し、返す
-	 * @param sessionList
-	 * @param id
-	 * @return ID該当の履歴データ
-	 */
-	public TransactionsDto searchByIdSession(List<TransactionsDto> sessionList, Integer id){
-		return sessionList.stream().filter(s -> id.equals(s.getId())).findFirst().orElse(null);
-	}
 }

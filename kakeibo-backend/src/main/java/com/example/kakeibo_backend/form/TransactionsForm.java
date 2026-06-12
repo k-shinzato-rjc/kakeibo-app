@@ -16,6 +16,9 @@ import lombok.Data;
 @Data
 public class TransactionsForm {
 	
+	// 取引ID
+	private Integer id;
+	
 	// カテゴリーID
 	private Integer categoryId;
 	
@@ -31,7 +34,7 @@ public class TransactionsForm {
 	private String memo;
 	
 	// ※受け取り用　結合先テーブルのオブジェクト カテゴリーテーブル
-	private CategoriesDto categories = new CategoriesDto();
+	private CategoriesDto categories;
 	
 	/**
 	 * form → Dto 変換
@@ -44,10 +47,12 @@ public class TransactionsForm {
 		
 		TransactionsDto transactionsDto = new TransactionsDto();
 		
+		transactionsDto.setId(id);
 		transactionsDto.setCategoryId(categoryId);
 		transactionsDto.setAmount(amount);
 		transactionsDto.setTransactionDate(transactionDate);
 		transactionsDto.setMemo(memo);
+		transactionsDto.setCategories(categories);
 		
 		return transactionsDto;
 	}
