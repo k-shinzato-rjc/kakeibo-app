@@ -219,7 +219,7 @@ export default function HistoryView(){
                                         <td className="px-6 py-4.5 text-right">
                                             <div className="inline-flex gap-1">
                                                 <button className="px-3 py-1.5 text-xs font-semibold text-slate-600 bg-slate-50 border border-slate-200 rounded-lg hover:bg-slate-100 hover:text-slate-800 transition-all"
-                                                        >
+                                                    onClick={() => router.push(`transactions/edit?paramId=${t.id}`)}>
                                                     編集
                                                 </button>
                                                 <button 

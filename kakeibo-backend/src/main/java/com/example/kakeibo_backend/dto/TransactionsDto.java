@@ -1,6 +1,7 @@
 package com.example.kakeibo_backend.dto;
 
 import java.time.LocalDate;
+import java.util.Objects;
 
 import com.example.kakeibo_backend.entity.TransactionsEntity;
 
@@ -28,7 +29,7 @@ public class TransactionsDto {
 	private String memo;
 	
 	// ※受け取り用　結合先テーブルのオブジェクト カテゴリーテーブル
-	private CategoriesDto categories = new CategoriesDto();
+	private CategoriesDto categories;
 	
 	/**
 	 * Dto → Entity 変換
@@ -41,6 +42,12 @@ public class TransactionsDto {
 	public TransactionsEntity toEntity() {
 		
 		TransactionsEntity transactionsEntity = new TransactionsEntity();
+		
+		// idが格納されている場合のみEntityに渡す
+		// Entityの自動ID付与と、save()メソッドの更新機能バッティング防止
+		if(Objects.nonNull(id)) {
+			transactionsEntity.setId(id);
+		}
 		
 		transactionsEntity.setCategoryId(categoryId);
 		transactionsEntity.setAmount(amount);

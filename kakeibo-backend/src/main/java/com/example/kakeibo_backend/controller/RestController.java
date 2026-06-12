@@ -1,5 +1,6 @@
 package com.example.kakeibo_backend.controller;
 
+import java.util.Comparator;
 import java.util.List;
 
 import jakarta.servlet.http.HttpSession;
@@ -74,8 +75,15 @@ public class RestController {
 	 */
 	@ResponseBody
 	@PostMapping("/api/regist")
-	public TransactionsDto regist(@RequestBody TransactionsForm form) {
+	public TransactionsDto regist(@RequestBody TransactionsForm form, HttpSession httpSession) {
+		
 		TransactionsDto transactionsDto = transactionsService.save(form.toDto());
+		
+		// セッションリストにも履歴を追加する
+		@SuppressWarnings("unchecked")
+		List<TransactionsDto> sessionList = (List<TransactionsDto>)httpSession.getAttribute("allTransactions");
+		sessionList.add(transactionsDto);
+		httpSession.setAttribute("allTransactions", sessionList);
 		
 		return transactionsDto;
 	}
@@ -90,7 +98,11 @@ public class RestController {
 	@GetMapping("/api/transactions/all")
 	public List<TransactionsDto> transactions(HttpSession httpSession){
 		
-		return (List<TransactionsDto>)httpSession.getAttribute("allTransactions");
+		List<TransactionsDto> sessionList = (List<TransactionsDto>)httpSession.getAttribute("allTransactions");
+		
+		sessionList.sort(Comparator.comparing(TransactionsDto::getId));
+		
+		return sessionList;
 	}
 	
 	/**
@@ -101,11 +113,15 @@ public class RestController {
 	 */
 	@ResponseBody
 	@PostMapping("/api/transactions/delete")
-	public List<TransactionsDto> deleteById(@RequestParam("id") Integer id){
+	public List<TransactionsDto> deleteById(@RequestParam("id") Integer id, HttpSession httpSession){
 		
 		transactionsService.deleteById(id);
 		
-		return transactionsService.findAll();
+		// セッションも更新
+		List<TransactionsDto> editList = transactionsService.findAll();
+		httpSession.setAttribute("allTransactions", editList);
+		
+		return editList;
 	}
 	
 	/**
@@ -140,5 +156,30 @@ public class RestController {
 		List<TransactionsDto> allTransactionsDto = (List<TransactionsDto>)httpSession.getAttribute("allTransactions");
 		
 		return transactionsService.searchByIdSession(allTransactionsDto, id);
+	}
+	
+	/**
+	 * 履歴編集 → DB更新＆セッションリスト更新
+	 * @param form
+	 * @param httpSession
+	 * @return 登録データ
+	 */
+	@ResponseBody
+	@PostMapping("/api/transactions/edit")
+	public TransactionsDto edit(@RequestBody TransactionsForm form, HttpSession httpSession) {
+		
+		// DB更新
+		TransactionsDto editTransaction = transactionsService.save(form.toDto());
+		
+		System.out.println(form.getCategories().getName());
+		System.out.println(form.getCategories().getType());
+		
+		// セッションリストのデータも更新
+		@SuppressWarnings("unchecked")
+		List<TransactionsDto> sessionList = (List<TransactionsDto>)httpSession.getAttribute("allTransactions");
+		transactionsService.deleteByIdSession(sessionList, form.getId());
+		httpSession.setAttribute("allTransactions", transactionsService.addSession(sessionList, editTransaction));
+		
+		return editTransaction;
 	}
 }
