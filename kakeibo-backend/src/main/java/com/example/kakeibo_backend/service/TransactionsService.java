@@ -1,7 +1,6 @@
 package com.example.kakeibo_backend.service;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -122,41 +121,5 @@ public class TransactionsService {
 				.collect(Collectors.toList());
 
 		return monthList;
-	}
-	
-	/**
-	 * 全履歴リスト（セッション）からID該当の履歴データを取得し、返す
-	 * @param sessionList
-	 * @param id
-	 * @return ID該当の履歴データ
-	 */
-	public TransactionsDto searchByIdSession(List<TransactionsDto> sessionList, Integer id){
-		return sessionList.stream().filter(s -> id.equals(s.getId())).findFirst().orElse(null);
-	}
-	
-	/**
-	 * 全履歴リスト（セッション）からID該当の履歴データを削除
-	 * @param sessionList
-	 * @param id
-	 * @return 削除後リスト
-	 */
-	public List<TransactionsDto> deleteByIdSession(List<TransactionsDto> sessionList, Integer id){
-		sessionList.removeIf(t -> id.equals(t.getId()));
-		
-		return sessionList;
-	}
-	
-	/**
-	 * 全履歴リスト（セッション）へ新しい履歴データを追加
-	 * @param sessionList
-	 * @param addData
-	 * @return 追加後 履歴リスト
-	 */
-	public List<TransactionsDto> addSession(List<TransactionsDto> sessionList, TransactionsDto addData){
-		
-		sessionList.add(addData);
-		sessionList.sort(Comparator.comparing(TransactionsDto :: getId));
-		
-		return sessionList;
 	}
 }

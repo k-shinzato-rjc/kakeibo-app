@@ -198,7 +198,7 @@ export default function HistoryView(){
                             <tbody className="divide-y divide-slate-100 bg-white">
                                 {transactions?.map((t, index) => (
                                     <tr key={index} className="hover:bg-slate-50/50 transition-colors duration-150 group">
-                                        <td className="px-6 py-4.5 text-sm text-slate-500 font-medium">#{t.id}</td>
+                                        <td className="px-6 py-4.5 text-sm text-slate-500 font-medium">{t.id}</td>
                                         <td className="px-6 py-4.5">
                                             <span className="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-semibold bg-slate-100 text-slate-700 group-hover:bg-white transition-colors border border-transparent group-hover:border-slate-200">
                                                 {t.categories.name}

@@ -3,8 +3,6 @@ package com.example.kakeibo_backend.controller;
 import java.util.Comparator;
 import java.util.List;
 
-import jakarta.servlet.http.HttpSession;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -46,14 +44,10 @@ public class RestController {
 	 */
 	@ResponseBody
 	@GetMapping("/api/summary")
-	public MonthSummaryDto summary(@RequestParam(name="year")Integer year,@RequestParam(name="month")Integer month, HttpSession httpSession) {
+	public MonthSummaryDto summary(@RequestParam(name="year")Integer year,@RequestParam(name="month")Integer month) {
 		
-		// 月間サマリー用データをセッションに保存
+		// 月間サマリー用データを取得
 		MonthSummaryDto monthSummaryDto = monthSummaryService.calc(year, month); 
-		
-		// 全履歴リストをセッションに保存
-		List<TransactionsDto> transactionsList = transactionsService.findAll();
-		httpSession.setAttribute("allTransactions", transactionsList);
 		
 		return monthSummaryDto;
 	}
@@ -75,34 +69,26 @@ public class RestController {
 	 */
 	@ResponseBody
 	@PostMapping("/api/regist")
-	public TransactionsDto regist(@RequestBody TransactionsForm form, HttpSession httpSession) {
+	public TransactionsDto regist(@RequestBody TransactionsForm form) {
 		
 		TransactionsDto transactionsDto = transactionsService.save(form.toDto());
-		
-		// セッションリストにも履歴を追加する
-		@SuppressWarnings("unchecked")
-		List<TransactionsDto> sessionList = (List<TransactionsDto>)httpSession.getAttribute("allTransactions");
-		sessionList.add(transactionsDto);
-		httpSession.setAttribute("allTransactions", sessionList);
 		
 		return transactionsDto;
 	}
 	
 	/**
-	 * セッションに格納された全履歴データを返す
-	 * @param httpSession
+	 * 全履歴データを返す
 	 * @return 全履歴データ
 	 */
-	@SuppressWarnings("unchecked")
 	@ResponseBody
 	@GetMapping("/api/transactions/all")
-	public List<TransactionsDto> transactions(HttpSession httpSession){
+	public List<TransactionsDto> transactions(){
 		
-		List<TransactionsDto> sessionList = (List<TransactionsDto>)httpSession.getAttribute("allTransactions");
+		List<TransactionsDto> allTransactions = transactionsService.findAll();
 		
-		sessionList.sort(Comparator.comparing(TransactionsDto::getId));
+		allTransactions.sort(Comparator.comparing(TransactionsDto :: getId));
 		
-		return sessionList;
+		return allTransactions;
 	}
 	
 	/**
@@ -113,15 +99,14 @@ public class RestController {
 	 */
 	@ResponseBody
 	@PostMapping("/api/transactions/delete")
-	public List<TransactionsDto> deleteById(@RequestParam("id") Integer id, HttpSession httpSession){
+	public List<TransactionsDto> deleteById(@RequestParam("id") Integer id){
 		
 		transactionsService.deleteById(id);
 		
-		// セッションも更新
-		List<TransactionsDto> editList = transactionsService.findAll();
-		httpSession.setAttribute("allTransactions", editList);
+		List<TransactionsDto> allTransactions = transactionsService.findAll();
+		allTransactions.sort(Comparator.comparing(TransactionsDto :: getId));
 		
-		return editList;
+		return allTransactions;
 	}
 	
 	/**
@@ -133,11 +118,9 @@ public class RestController {
 	 */
 	@ResponseBody
 	@PostMapping("/api/transactions/select")
-	public List<TransactionsDto> selectByPeriod(@RequestParam("year") Integer year, @RequestParam("month") Integer month,
-			HttpSession httpSession){
+	public List<TransactionsDto> findByPeriod(@RequestParam("year") Integer year, @RequestParam("month") Integer month){
 		
-		@SuppressWarnings("unchecked")
-		List<TransactionsDto> allTransactionsDto = (List<TransactionsDto>)httpSession.getAttribute("allTransactions");
+		List<TransactionsDto> allTransactionsDto = transactionsService.findAll();
 		
 		return transactionsService.toMonthList(allTransactionsDto, year, month);
 	}
@@ -150,12 +133,9 @@ public class RestController {
 	 */
 	@ResponseBody
 	@PostMapping("/api/transactions/search")
-	public TransactionsDto searchById(@RequestParam("id") Integer id, HttpSession httpSession) {
+	public TransactionsDto findById(@RequestParam("id") Integer id) {
 		
-		@SuppressWarnings("unchecked")
-		List<TransactionsDto> allTransactionsDto = (List<TransactionsDto>)httpSession.getAttribute("allTransactions");
-		
-		return transactionsService.searchByIdSession(allTransactionsDto, id);
+		return transactionsService.findById(id);
 	}
 	
 	/**
@@ -166,19 +146,10 @@ public class RestController {
 	 */
 	@ResponseBody
 	@PostMapping("/api/transactions/edit")
-	public TransactionsDto edit(@RequestBody TransactionsForm form, HttpSession httpSession) {
+	public TransactionsDto edit(@RequestBody TransactionsForm form) {
 		
 		// DB更新
 		TransactionsDto editTransaction = transactionsService.save(form.toDto());
-		
-		System.out.println(form.getCategories().getName());
-		System.out.println(form.getCategories().getType());
-		
-		// セッションリストのデータも更新
-		@SuppressWarnings("unchecked")
-		List<TransactionsDto> sessionList = (List<TransactionsDto>)httpSession.getAttribute("allTransactions");
-		transactionsService.deleteByIdSession(sessionList, form.getId());
-		httpSession.setAttribute("allTransactions", transactionsService.addSession(sessionList, editTransaction));
 		
 		return editTransaction;
 	}

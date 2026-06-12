@@ -118,7 +118,7 @@ export default function EditView(){
                     </div>
                 </div>
 
-                {/* フォームカード */}
+                {/* フォーム*/}
                 <div className="bg-white rounded-xl border border-slate-100 shadow-sm p-6 sm:p-8">
                     <form onSubmit={handleSubmit(Edit)} className="space-y-5">
                         
@@ -127,7 +127,7 @@ export default function EditView(){
                             <label htmlFor="categoryId" className="text-xs font-semibold text-slate-500 uppercase tracking-wider">カテゴリー名</label>
                             <select 
                                 id="categoryId"
-                                {...register("categoryId")}
+                                {...register("categoryId" , {valueAsNumber: true})}
                                 className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all cursor-pointer"
                             >
                                 <option value={transaction?.categoryId}>変更無し</option>
@@ -144,9 +144,8 @@ export default function EditView(){
                                 <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm">¥</span>
                                 <input 
                                     type="number" 
-                                    id="amount" 
-                                    defaultValue={transaction?.amount} 
-                                    {...register("amount")}
+                                    id="amount"
+                                    {...register("amount" , {valueAsNumber : true})}
                                     className="w-full pl-7 pr-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm font-medium text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all"
                                 />
                             </div>
@@ -157,8 +156,7 @@ export default function EditView(){
                             <label htmlFor="transactionDate" className="text-xs font-semibold text-slate-500 uppercase tracking-wider">取引日</label>
                             <input 
                                 type="date" 
-                                id="transactionDate" 
-                                defaultValue={transaction?.transactionDate} 
+                                id="transactionDate"
                                 {...register("transactionDate")}
                                 className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all"
                             />
@@ -168,8 +166,7 @@ export default function EditView(){
                         <div className="flex flex-col gap-1.5">
                             <label htmlFor="memo" className="text-xs font-semibold text-slate-500 uppercase tracking-wider">詳細</label>
                             <textarea 
-                                id="memo" 
-                                defaultValue={transaction?.memo} 
+                                id="memo"
                                 {...register("memo")}
                                 rows={3}
                                 className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all resize-none"
@@ -177,10 +174,10 @@ export default function EditView(){
                         </div>
 
                         {/* 隠しフィールド群 */}
-                        <input type="hidden" {...register("id",{value : Number(paramId)})}></input>
-                        <input type="hidden" {...register("categories.id", {value : Number(transaction?.categories?.id)})}></input>
-                        <input type="hidden" {...register("categories.name", {value : transaction?.categories?.name})}></input>
-                        <input type="hidden" {...register("categories.type", {value : transaction?.categories?.type})}></input>
+                        <input type="hidden" {...register("id", {valueAsNumber : true})}></input>
+                        <input type="hidden" {...register("categories.id", {valueAsNumber : true})}></input>
+                        <input type="hidden" {...register("categories.name")}></input>
+                        <input type="hidden" {...register("categories.type")}></input>
                         
                         {/* 送信ボタン */}
                         <button 
